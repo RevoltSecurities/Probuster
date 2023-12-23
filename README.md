@@ -29,6 +29,7 @@ Probuster's Docs mode provides a seamlessly integrated documentation hub. Explor
 
 - **Comprehensive Reporting:** Generate detailed reports that encapsulate findings, aiding in concise communication of discovered vulnerabilities and potential risks.
 - **Tool management**: Probuster can be easily installed and easily manage your command line tool because Probuster ⚡ is also a python package
+- **Platform Independent:**: Probuster can be easily installed and can be easily build on any operating system and can be used for your Recon process even on your Android and Ios devices
 
 Probuster is not just a tool, it's a manifestation of excellence in reconnaissance, designed to empower ethical hackers with the precision needed to navigate the complexities of modern cybersecurity landscapes. Elevate your penetration testing 
 capabilities with Probuster and redefine your approach to ethical hacking. 
