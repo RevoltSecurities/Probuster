@@ -48,19 +48,19 @@ random_color = random.choice(colors)
 
 try:
     
-    from .modules.dir.dir import *
+    from modules.dir.dir import *
     
-    from .modules.dnb.dnb import *
+    from modules.dnb.dnb import *
     
-    from .modules.vhost.vhost import *
+    from modules.vhost.vhost import *
     
-    from .modules.wordlist.wordlist import *
+    from modules.wordlist.wordlist import *
     
-    from .modules.version.version import *
+    from modules.version.version import *
     
-    from .modules.help.help import *
+    from modules.help.help import *
     
-    from .modules.banner.banner import banner
+    from modules.banner.banner import banner
     
 except ImportError as e:
     
