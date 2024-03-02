@@ -27,7 +27,7 @@ setup(
 ],
     entry_points={
         'console_scripts': [
-            'probuster = probuster:main'
+            'probuster = probuster.probuster:main'
         ]
     },
 )
