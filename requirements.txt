@@ -1,3 +1,4 @@
+click>=8.1.7
 aiofiles>=23.2.1
 aiohttp>=3.8.6
 alive_progress>=3.1.4
@@ -9,3 +10,5 @@ Requests>=2.31.0
 streamlit>=1.29.0
 urllib3>=2.1.0
 asyncio>=3.4.3
+anyio>=4.2.0
+h11==0.13.0
