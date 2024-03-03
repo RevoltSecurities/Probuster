@@ -34,42 +34,23 @@ Probuster's Docs mode provides a seamlessly integrated documentation hub. Explor
 Probuster is not just a tool, it's a manifestation of excellence in reconnaissance, designed to empower ethical hackers with the precision needed to navigate the complexities of modern cybersecurity landscapes. Elevate your penetration testing 
 capabilities with Probuster and redefine your approach to ethical hacking. 
 
-### Update to latest version:
+### Update or Install the latest version:
 
 ### Installation:
 
 ```bash
-pip install --upgrade probuster
+pip install git+https://github.com/sanjai-AK47/Probuster.git
 
 probuster -h
 ```
 If you system has encountered in system depended error use this command to install
 ```bash
-pip install probuster --break-system-packages
+pip install git+https://github.com/sanjai-AK47/Probuster.git --break-system-packages
 ```
-If your system has encountered any permission errors then try this command
 
-```bash
-sudo pip install --upgrade probuster
-```
 
 Probuster can be easily installed as you desired either through `pip` or `git clone` it depends on your choice
 
-#### Installation through pip:
-
-```bash
-pip install --upgrade probuster
-
-probuster -h
-```
-If you system has encountered in system depended error use this command to install
-```bash
-pip install --upgrade probuster --break-system-packages
-```
-If your system has encountered any permission errors then try this command
-
-```bash
-sudo pip install  --upgrade probuster
 ```
 #### Installation through git clones:
 
