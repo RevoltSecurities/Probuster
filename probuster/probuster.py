@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 
+#!/usr/bin/env python3
 """
     The code is a Python script that utilizes the Click library to create a command-line interface for a
     tool called Probuster, which includes functionalities for directory enumeration, virtual host
@@ -17,6 +17,7 @@ import random
 import sys
 import requests 
 import asyncio
+import logging
 
 warnings.simplefilter('ignore', requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
@@ -48,81 +49,92 @@ random_color = random.choice(colors)
 
 settings = dict(help_option_names=['-h', '--help'])
 
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("probuster.log"), logging.StreamHandler()],
+)
 
 try:
-    
+
     from .modules.dir.dir import *
-    
+
     from .modules.dnb.dnb import *
-    
+
     from .modules.vhost.vhost import *
-    
+
     from .modules.wordlist.wordlist import *
-    
+
     from .modules.version.version import *
-    
+
     from .modules.help.help import *
-    
+
     from .modules.banner.banner import banner
-    
+
 except ImportError as e:
-    
+    logging.error(f"Import Error occurred in Module imports due to: {e}")
+
     print(f"[{bold}{red}INFO{reset}]: {bold}{white}Import Error occured in Module imports due to: {e}{reset}")
-    
+
     print(f"[{bold}{blue}INFO{reset}]: {bold}{white}If you are encountering this issue more than a time please report the issues in Probuster Github page.. {reset}")
-    
+
     exit()
-    
+
 def doc_file():
-    
+
     global file_path
-    
+
     filename = "probuster_documentation.py"
-    
+
     path = "/"
-    
+
     for root,dirs,files in os.walk(path):
-        
+
         if filename in files:
-            
+
             file_path = os.path.join(root, filename)
-            
+
             return file_path
-        
+    logging.error(
+            "Config File not found. Please install Probuster with its probuster_documentation.py file."
+        )
+
     print(f"[{bold}{red}ALERT{reset}]: Config File not found please kindly install the Probuster with its {filename} file")
-    
+
 def get_username():
-    
+
     try:
-        
+
         username = os.getlogin()
-        
+
     except OSError:
-       
+
         username = os.getenv('USER') or os.getenv('LOGNAME') or os.getenv('USERNAME') or 'Unknown User'
-        
+
     except Exception as e:
-        
+        logging.error(f"Error getting username: {e}")
         username = "Unknown User"
-        
-    
+
     return username
 
 def version():
-    
-    latest = check_version()
-    
-    version = "v1.0.2"
-    
-    if latest == version:
+    try:
+        latest = check_version()
         
-        print(f"[{blue}{bold}Version{reset}]:{bold}{white} Probuster current version {version} ({green}latest{reset}{bold}{white}){reset}")
+        version = "v1.0.2"
         
-    else:
-        
-        print(f"[{blue}{bold}Version{reset}]: {bold}{white}Probuster current version {version} ({red}outdated{reset}{bold}{white}){reset}")
-     
-    
+        if latest == version:
+            
+            print(f"[{blue}{bold}Version{reset}]:{bold}{white} Probuster current version {version} ({green}latest{reset}{bold}{white}){reset}")
+            
+        else:
+            
+            print(f"[{blue}{bold}Version{reset}]: {bold}{white}Probuster current version {version} ({red}outdated{reset}{bold}{white}){reset}")
+
+    except Exception as e:
+        logging.error(f"Error checking version: {e}")
+
 brand = banner()
 
 username = get_username()
@@ -140,23 +152,22 @@ def hey(ctx, param, value): #Disables the clicks default help and print custom h
         else:
             
             ctx.invoke(ctx.command, ['--help'])
-            
+
 
 def validate_match(ctx, param, value): #argsparser nargs="*" converted into in this function to handle users codes of match and includes
-        
-        if value is None:
-            
-            return 
-    
-        try:
-            val = [int(x) for x in value.split(',')]
-            
-            return val #returning list so we can compare values
-        
-        except Exception as e:
-            
-            pass
-            
+
+    if value is None:
+
+        return
+
+    try:
+        val = [int(x) for x in value.split(",")]
+
+        return val  # returning list so we can compare values
+
+    except Exception as e:
+        logging.error(f"Error validating match: {e}")
+
 print(f"{bold}{white}")
 
 @click.group(context_settings=settings)
@@ -202,45 +213,44 @@ def cli():
 @click.option("-h", "--help", is_flag=True)
 
 def dir(url, concurrency, wordlist, proxy, output, verbose, title, timeout, server, application_type, word_count, no_color, allow_redirect, match, exclude, help):
-    
+
     click.echo(f"{bold}{random_color}{brand}{reset}")
-    
+
     version()
-    
+
     if help:
-        
+
         dir_mode_help()
-    
+
     if url:
-        
+
         if url.startswith(("https://", "http://")):
-                
-                url = url if url.endswith("/") else f"{url}/"
-             
+
+            url = url if url.endswith("/") else f"{url}/"
+
         elif url.startswith(("https://", "http://")):
-                
-                url = f"http://{url}" if url.endswith("/") else f"https://{url}/"
+
+            url = f"http://{url}" if url.endswith("/") else f"https://{url}/"
         else:
-            
-                click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide a --url or -u value with https:// or http:// protocol{reset}")
-            
-                exit()
-                
-            
-    if not url:
-            
-            click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide -u or --url value for Directory or File enumeration{reset}")
-            
-            dir_mode_help()
-            
+            logging.error("URL must start with http:// or https://")
+
+            click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide a --url or -u value with https:// or http:// protocol{reset}")
+
             exit()
-            
+
+    if not url:
+        logging.error("URL not provided for Directory or File enumeration")
+
+        click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide -u or --url value for Directory or File enumeration{reset}")
+
+        dir_mode_help()
+
+        exit()
+
     common = "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt"
-    
+
     wordlists = wordlist if wordlist else common
-    
-        
-    
+
     click.echo(f"""{bold}{white}
               
 ========================================================================================
@@ -258,23 +268,20 @@ def dir(url, concurrency, wordlist, proxy, output, verbose, title, timeout, serv
                                                                                        
 ========================================================================================{reset}
 """)
-    
-    hosts = common_loader(wordlists)
-    
 
-        
+    hosts = common_loader(wordlists)
+
     dirb = []
-        
+
     for host in hosts:
-            
+
         dirb.append(f"{url}{host}")
-        
-    
-        
-        
-    asyncio.run(dirbust_threader(dirb, concurrency,proxy, output, verbose, title, timeout, server, application_type, word_count, no_color, allow_redirect, match, exclude))
-    
-    
+
+    try:
+        asyncio.run(dirbust_threader(dirb, concurrency,proxy, output, verbose, title, timeout, server, application_type, word_count, no_color, allow_redirect, match, exclude))
+    except Exception as e:
+        logging.error(f"Error in dirbust_threader: {e}")
+
 @cli.command()
 
 @click.option("-u", "--url", type=str, help="Specify the target ip or host for vitrual host enumeration ( Most probably use IP address as the URL argument)")
@@ -332,6 +339,7 @@ def vhost(url, concurrency, wordlist, proxy, output, verbose, title, timeout, se
                 
                 url = f"http://{url}" if url.endswith("/") else f"https://{url}/"
         else:
+                logging.error("URL must start with http:// or https://")
             
                 click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide a --url or -u value with https:// or http:// protocol{reset}")
             
@@ -339,6 +347,7 @@ def vhost(url, concurrency, wordlist, proxy, output, verbose, title, timeout, se
                 
             
     if not url:
+            logging.error("URL not provided for Directory or File enumeration")
             
             click.echo(f"[{bold}{red}INFO{reset}]: {bold}{white}Please provide -u or --url value for Directory or File enumeration{reset}")
             
@@ -415,7 +424,7 @@ def dns(domain, show_ip, concurrency, wordlist, output, verbose, no_color, help)
     
         
     asyncio.run(dnb_handler(domain, show_ip, concurrency, wordlist, output, verbose, no_color, username))
- 
+
 
 @cli.command()
 
@@ -449,7 +458,7 @@ def doc(show_doc, help):
         stream = doc_file()
         
         os.system(f'streamlit run {stream}')
-        
+
 
 @cli.command()
 
