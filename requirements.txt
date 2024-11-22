@@ -1,6 +1,6 @@
 click>=8.1.7
 aiofiles>=23.2.1
-aiohttp>=3.8.6
+aiohttp>=3.10.11
 alive_progress>=3.1.4
 art>=6.1
 beautifulsoup4>=4.11.1
